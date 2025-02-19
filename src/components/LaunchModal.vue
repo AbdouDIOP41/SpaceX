@@ -1,15 +1,19 @@
 <script setup>
 
+import LaunchCard from './LaunchCard.vue';
+
 const props = defineProps({
   show: Boolean,
   launch: Object
 });
 
+// Déclare l'événement 'close'
 const emit = defineEmits(['update:show']);
 //const showVideo = ref(false);
 
 const closeModal = () => {
-  emit('update:show', false);
+  //emit('close'); // Émet l'événement 'close'
+  emit('update:show', false); // Met à jour la prop 'show' pour fermer le modal
 };
 </script>
 
@@ -30,20 +34,25 @@ export default {
 };
 </script>
 
-
 <template>
-    <div v-if="show" class="modal">
-      <div class="modal-content">
-        <!-- Nom du lancement -->
-        <h2>{{ launch?.name }}</h2>
-        <!-- Date au format Jour/Mois/Année -->
-        <p>Date: {{ new Date(launch?.date_utc).toLocaleDateString('fr-FR') }}</p>
-        <!-- Détails de la mission -->
-        <p><strong>Details:</strong> {{ launch?.details || 'No details available' }}</p>
+    <Teleport to="body">
+      <div v-if="show" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg max-w-3xl w-full p-6 relative">
+          <!-- Bouton de fermeture -->
+          <button @click="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">✖</button>
   
-        <button @click="closeModal">Close</button>
+          <!-- Contenu de la carte -->
+          <LaunchCard :launch="launch" />
+  
+          <!-- Bouton de fermeture -->
+          <div class="text-center mt-4">
+            <button @click="closeModal" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+              Fermer
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </Teleport>
   </template>
 
 <style scoped>

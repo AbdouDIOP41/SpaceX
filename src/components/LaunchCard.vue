@@ -1,64 +1,72 @@
-<!-- src/components/LaunchCard.vue -->
 <template>
-    <div class="bg-white border border-gray-200 rounded-lg shadow-md p-6 my-4">
-      <h2 class="text-xl font-semibold mb-2">{{ launch.name }}</h2>
-      <p class="text-gray-600 mb-2">
-        <strong>Date:</strong> {{ new Date(launch.date_utc).toLocaleDateString() }}
-      </p>
-      <p class="text-gray-700 mb-4">
-        <strong>Details:</strong> {{ launch.details || 'No details available' }}
-      </p>
+    
+      <div  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg max-w-3xl w-full p-6 relative">
+          <!-- Bouton de fermeture 
+          <button @click="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">✖</button>
+          -->
+          <!-- Contenu du modal -->
+          <h2 class="text-2xl font-semibold text-center mb-4">{{ launch?.name || 'Nom inconnu' }}</h2>
+          <img v-if="launch?.links?.patch?.large" :src="launch.links.patch.large" alt="Mission Patch" class="w-full h-64 object-contain mb-4">
+          <p class="text-gray-600"><strong>Date :</strong> {{ formattedDate }}</p>
+          <p class="text-gray-600"><strong>Détails :</strong> {{ launch?.details || 'Aucune information disponible' }}</p>
+          <p class="text-gray-600"><strong>Lieu :</strong> {{ launch?.launchpad?.name || 'Inconnu' }}</p>
+          
+          <!-- Payloads et Clients -->
+          <p class="text-gray-600"><strong>Payloads :</strong> {{ launch?.payloads?.map(p => p.name).join(', ') || 'Non disponible' }}</p>
+          <p class="text-gray-600"><strong>Clients :</strong> {{ launch?.payloads?.map(p => p.customers?.join(', ')).join(', ') || 'Non disponible' }}</p>
   
-      <!-- Image de la mission -->
-      <div v-if="launch.links?.flickr?.original?.length" class="mb-4">
-        <img :src="launch.links.flickr.original[0]" alt="Mission Image" class="rounded-md w-full h-auto" />
-      </div>
+          <a v-if="launch?.links?.article" :href="launch.links.article" target="_blank" class="text-blue-500 hover:underline block mt-2">
+            📖 Lire l'article
+          </a>
   
-      <p class="text-gray-600 mb-2"><strong>Launchpad:</strong> {{ launch.launchpad?.name || 'Unknown' }}</p>
+          <!-- Toggle vidéo YouTube -->
+          <div v-if="launch?.links?.webcast" class="mt-4">
+            <label class="flex items-center cursor-pointer">
+              <input type="checkbox" v-model="showVideo" class="hidden">
+              <span class="w-10 h-5 flex items-center bg-gray-300 rounded-full p-1 duration-300 ease-in-out" :class="{ 'bg-blue-500': showVideo }">
+                <span class="w-4 h-4 bg-white rounded-full shadow-md transform duration-300 ease-in-out" :class="{ 'translate-x-5': showVideo }"></span>
+              </span>
+              <span class="ml-3 text-gray-700">Voir la vidéo</span>
+            </label>
+            <div v-if="showVideo" class="mt-4">
+              <iframe class="w-full h-64 rounded-lg" :src="youtubeEmbedUrl" frameborder="0" allowfullscreen></iframe>
+            </div>
+          </div>
   
-      <!-- Liste des Payloads -->
-      <div v-if="launch.payloads?.length" class="mb-4">
-        <strong>Payloads:</strong>
-        <ul class="list-disc pl-6">
-          <li v-for="payload in launch.payloads" :key="payload" class="text-gray-700">{{ payload }}</li>
-        </ul>
-      </div>
-  
-      <!-- Lien vers l'article de présentation -->
-      <div v-if="launch.links?.article" class="mb-4">
-        <a :href="launch.links.article" target="_blank" class="text-blue-500 hover:text-blue-700">
-          Read more
-        </a>
-      </div>
-  
-      <!-- Toggle YouTube video -->
-      <div class="mt-4">
-        <label for="show-video" class="inline-flex items-center text-gray-700">
-          <input type="checkbox" id="show-video" v-model="showVideo" class="mr-2" />
-          Show YouTube Video
-        </label>
-  
-        <!-- Afficher la vidéo YouTube si showVideo est vrai -->
-        <div v-if="showVideo && launch.links?.webcast" class="mt-4">
-          <iframe :src="`https://www.youtube.com/embed/${launch.links.youtube_id}`" frameborder="0" allowfullscreen class="w-full h-64 rounded-md"></iframe>
         </div>
       </div>
-    </div>
+
   </template>
   
   <script setup>
-  import { ref } from 'vue';
+  import { computed, ref } from 'vue';
   
-  // Prop 'launch' qui recevra les données du lancement
   const props = defineProps({
-    launch: Object,
+    show: Boolean,
+    launch: Object
   });
   
-  // Déclaration de l'état pour gérer l'affichage de la vidéo YouTube
+  const emit = defineEmits(['update:show']);
   const showVideo = ref(false);
-  </script>
   
-  <style scoped>
-  /* Aucune règle CSS spécifique nécessaire avec Tailwind */
-  </style>
+  // Formatter la date en JJ/MM/AAAA
+  const formattedDate = computed(() => {
+    return props.launch?.date_utc ? new Date(props.launch.date_utc).toLocaleDateString('fr-FR') : 'Non disponible';
+  });
+  
+  // Générer l'URL d'intégration YouTube
+  const youtubeEmbedUrl = computed(() => {
+    if (!props.launch?.links?.webcast) return '';
+    const videoId = props.launch.links.webcast.split('v=')[1];
+    return `https://www.youtube.com/embed/${videoId}`;
+  });
+  
+  /*
+  // Fonction pour fermer le modal
+  const closeModal = () => {
+    emit('update:show', false);
+  };
+  */
+  </script>
   

@@ -98,21 +98,20 @@ onMounted(() => {
       </div>
 
       <ul v-else class="space-y-4">
-
-
-
       <!--<ul v-if="filterLaunches && filterLaunches.length > 0"> -->
         <li v-for="(launch, index) in filterLaunches" :key="launch.id"
-          class="bg-gray-700 p-4 rounded-lg shadow-md flex justify-between items-center">
+          class="bg-gray-700 p-4 rounded-lg shadow-md flex justify-between items-center"
+          @click="openModal(index)">
           <div>
             <h3 class="text-lg font-bold">{{ launch.name }}</h3>
             <p class="text-sm text-gray-300">{{ new Date(launch.date_utc).toLocaleString('fr-FR') }}</p>
           </div>
           
+          <!---
           <button @click="openModal(index)"
                   class="ml-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
             Voir détails
-          </button>
+          </button>-->
 
           <Teleport to="body">
             <LaunchModal 

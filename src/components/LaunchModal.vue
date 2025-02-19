@@ -36,20 +36,27 @@ export default {
 
 <template>
     <Teleport to="body">
-      <div v-if="show" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-lg max-w-3xl w-full p-6 relative">
-          <!-- Bouton de fermeture -->
-          <button @click="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">✖</button>
-  
-          <!-- Contenu de la carte -->
-          <LaunchCard :launch="launch" />
-  
-          <!-- Bouton de fermeture -->
-          <div class="text-center mt-4">
-            <button @click="closeModal" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-              Fermer
+      <div v-if="show" 
+        class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md md:max-w-2xl p-6 relative transform transition-all scale-95">
+
+            <!-- Bouton de fermeture -->
+            <button @click="$emit('update:show', false)" 
+                class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-lg">✖
             </button>
-          </div>
+
+            <!-- Contenu de la carte -->
+            
+            <LaunchCard :launch="launch" />
+
+            <!-- Bouton de fermeture -->
+            <div class="text-center mt-4">
+                <button @click="$emit('update:show', false)" 
+                        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                    Fermeture
+                </button>
+            </div>
+            
         </div>
       </div>
     </Teleport>

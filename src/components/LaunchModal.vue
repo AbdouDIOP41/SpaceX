@@ -56,6 +56,7 @@ export default {
   </template>
 
 <style scoped>
+@import "tailwindcss";
 .modal {
   position: fixed;
   z-index: 999;

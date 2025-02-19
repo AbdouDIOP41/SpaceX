@@ -119,6 +119,7 @@ onMounted(() => {
 
 
 <style scoped>
+@import "tailwindcss";
 /* Styles de base pour le projet */
 </style>
 

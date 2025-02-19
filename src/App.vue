@@ -59,61 +59,72 @@ onMounted(() => {
 
 
 <template>
-  <div>
-    <h1 class="text-4xl text-center py-4">SpaceX Launches</h1>
+  <div class="min-h-screen bg-gray-900 text-white p-6">
+
+     <!-- Titre principal -->
+    <h1 class="text-4xl font-bold text-center mb-8">🚀 SpaceX Launches</h1>
 
     <!-- Section Prochain lancement -->
-   <div>
-    <h1>Prochain lancement SpaceX</h1>
+    <section class="bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
+      <h2 class="text-2xl font-semibold text-center mb-4">🛰️ Prochain lancement</h2>
+      
+      <div v-if="nextLaunch" class="text-center">
+        <h3 class="text-xl font-bold">{{ nextLaunch.name }}</h3>
+        <p class="text-lg mt-2">📅 <strong>Date :</strong> {{ new Date(nextLaunch.date_utc).toLocaleString() }}</p>
+        <p class="text-lg mt-2">⏳ <strong>Décompte :</strong> <span class="text-red-400 font-bold">{{ countdown }}</span> secondes</p>
+      </div>
 
-    <!-- Afficher les informations du prochain lancement -->
-    <div v-if="nextLaunch && countdown>0" >
-      <h2>{{ nextLaunch.name }}</h2>
-      <p>Date : {{ new Date(nextLaunch.date_utc).toLocaleString() }}</p>
-      <p>Décompte : {{ countdown }} secondes</p>
-    </div>
+      <div v-else class="text-center text-gray-400">
+        <p class="animate-pulse">Chargement du prochain lancement...</p>
+      </div>
+    </section>
 
-    <!-- Afficher un message si aucune donnée n'est disponible -->
-    <div v-else>
-      <p>Chargement du prochain lancement...</p>
-    </div>
-  </div>
-
-   
-  <div v-if="isLoading">
-  <p>Chargement des lancements...</p>
-</div>
+    <!-- Filtrage des lancements -->
+    <section class="mb-6">
+      <label for="filter" class="block text-lg font-semibold mb-2">📌 Filtrer les lancements :</label>
+      <select id="filter" v-model="filter" class="w-full p-2 rounded bg-gray-700 text-white">
+        <option v-for="option in options" :key="option.value" :value="option.value">
+          {{ option.text }}
+        </option>
+      </select>
+    </section>
 
     <!-- Liste des lancements -->
-    <div v-else>
+    <section class="bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h2 class="text-2xl font-semibold text-center mb-4">📜 Derniers lancements</h2>
 
-       <!-- Filtre de lancements -->
-       <div class="mb-4">
-        <select id="filter" v-model="filter" class="mb-4">
-          <option v-for="option in options" :key="option.value" :value="option.value">
-            {{ option.text }}
-          </option>
-        </select>
-       </div>
+      <div v-if="isLoading" class="text-center">
+        <p class="animate-pulse text-gray-400">Chargement des lancements...</p>
+      </div>
 
-      <ul v-if="filterLaunches && filterLaunches.length > 0">
-        <li v-for="(launch, index) in filterLaunches" :key="launch.id">
-          {{ launch.name }} - {{ new Date(launch.date_utc).toLocaleString('fr-FR') }}
-          <button @click="openModal(index)" class="ml-2 bg-blue-500 text-white px-2 py-1 rounded">Show Modal</button>
+      <ul v-else class="space-y-4">
+
+
+
+      <!--<ul v-if="filterLaunches && filterLaunches.length > 0"> -->
+        <li v-for="(launch, index) in filterLaunches" :key="launch.id"
+          class="bg-gray-700 p-4 rounded-lg shadow-md flex justify-between items-center">
+          <div>
+            <h3 class="text-lg font-bold">{{ launch.name }}</h3>
+            <p class="text-sm text-gray-300">{{ new Date(launch.date_utc).toLocaleString('fr-FR') }}</p>
+          </div>
+          
+          <button @click="openModal(index)"
+                  class="ml-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+            Voir détails
+          </button>
+
           <Teleport to="body">
             <LaunchModal 
               v-if="showModal && showModal[index] !== undefined && showModal[index]"
               :show="showModal[index]" 
               @update:show="showModal[index] = $event"
               :launch="launch">
-              <template #header>
-                <h3>{{ launch.name }} Details</h3>
-              </template>
             </LaunchModal>
           </Teleport>
         </li>
       </ul>
-    </div>
+    </section>
   </div>
 </template>
 

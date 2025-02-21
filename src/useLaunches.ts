@@ -5,7 +5,7 @@ export const useLaunches = () => {
   const launches = ref<any[]>([]);
   const nextLaunch = ref<any>(null);
   const countdown = ref(0);
-  const filter = ref('all');
+  const filterOptions = ref('all');
   //const showModal = ref<boolean[]>([]);
 
   const isLoading = ref(true);
@@ -62,9 +62,9 @@ export const useLaunches = () => {
   const filterLaunches = computed(() => {
     if (!launches.value || launches.value.length === 0) return [];
 
-    if (filter.value === 'successful') {
+    if (filterOptions.value === 'successful') {
       return launches.value.filter((launch: any) => launch.success === true).slice(-10);
-    } else if (filter.value === 'failed') {
+    } else if (filterOptions.value === 'failed') {
       return launches.value.filter((launch: any) => launch.success === false).slice(-10);
     } else {
       return launches.value.slice(-10);
@@ -79,7 +79,7 @@ export const useLaunches = () => {
     fetchNextLaunch,
     updateCountdown,
     filterLaunches,
-    filter,
+    filterOptions,
     //showModal,
     options,
     isLoading

@@ -9,7 +9,8 @@
         <!-- Image -->
         <div class="flex justify-center">
           <img v-if="launch?.links?.patch?.large" 
-               :src="launch.links.patch.large" 
+               :src="launch.links.patch.large"
+               loading="lazy"
                alt="Mission Patch" 
                class="w-48 h-48 object-contain mb-4 rounded-lg shadow-md">
         </div>
@@ -58,7 +59,7 @@
   </template>
   
   
-  <script setup>
+  <script setup lang="ts">
   import { computed, ref } from 'vue';
   
   const props = defineProps({

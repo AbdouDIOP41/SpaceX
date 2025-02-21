@@ -1,3 +1,38 @@
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+
+const props = defineProps({
+  show: Boolean,
+  launch: Object
+});
+
+const emit = defineEmits(['update:show']);
+const showVideo = ref(false);
+
+// Formatter la date en JJ/MM/AAAA
+const formattedDate = computed(() => {
+  return props.launch?.date_utc ? new Date(props.launch.date_utc).toLocaleDateString('fr-FR') : 'Non disponible';
+});
+
+// Générer l'URL d'intégration YouTube
+const youtubeEmbedUrl = computed(() => {
+  if (!props.launch.links?.webcast) return '';
+  
+  
+  if (props.launch.links.webcast.includes('watch?v=')) {
+    return props.launch.links.webcast.replace('watch?v=', 'embed/');
+  }
+  
+  if (props.launch.links.webcast.includes('youtu.be/')) {
+    const videoId = props.launch.links.webcast.split('youtu.be/')[1];
+    return `https://www.youtube.com/embed/${videoId}`;
+  }
+  
+  return '';
+});
+
+</script>
+
 <template>
     <div class="space-y-6">
     
@@ -49,7 +84,9 @@
             <iframe class="w-full h-64 rounded-lg shadow-md" 
                     :src="youtubeEmbedUrl" 
                     frameborder="0" 
-                    allowfullscreen>
+                    allowfullscreen
+                    loading="lazy" 
+                    title="YouTube Video">
             </iframe>
           </div>
         </div>
@@ -59,36 +96,6 @@
   </template>
   
   
-  <script setup lang="ts">
-  import { computed, ref } from 'vue';
-  
-  const props = defineProps({
-    show: Boolean,
-    launch: Object
-  });
-  
-  const emit = defineEmits(['update:show']);
-  const showVideo = ref(false);
-  
-  // Formatter la date en JJ/MM/AAAA
-  const formattedDate = computed(() => {
-    return props.launch?.date_utc ? new Date(props.launch.date_utc).toLocaleDateString('fr-FR') : 'Non disponible';
-  });
-  
-  // Générer l'URL d'intégration YouTube
-  const youtubeEmbedUrl = computed(() => {
-    if (!props.launch?.links?.webcast) return '';
-    const videoId = props.launch.links.webcast.split('v=')[1];
-    return `https://www.youtube.com/embed/${videoId}`;
-  });
-  
-  /*
-  // Fonction pour fermer le modal
-  const closeModal = () => {
-    emit('update:show', false);
-  };
-  */
-  </script>
   
   <style scoped>
         @import "tailwindcss";

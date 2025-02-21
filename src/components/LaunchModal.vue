@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 
 import LaunchCard from './LaunchCard.vue';
 
@@ -17,22 +17,7 @@ const closeModal = () => {
 };
 </script>
 
-<script>
-// Ajout d'un export default classique pour la compatibilité
-export default {
-  name: 'LaunchModal',
-  props: {
-    show: Boolean,
-    launch: Object
-  },
-  emits: ['update:show'],
-  methods: {
-    closeModal() {
-      this.$emit('update:show', false);
-    },
-  },
-};
-</script>
+
 
 <template>
     <Teleport to="body">
